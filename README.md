@@ -1,0 +1,1 @@
+# DotVast.Toolkit.StringResource
