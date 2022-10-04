@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DotVast.Toolkit.StringResource\DotVast.Toolkit.StringResource.csproj" />
+		<ProjectReference Include="..\DotVast.Toolkit.StringResource.SourceGenerators\DotVast.Toolkit.StringResource.SourceGenerators.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+	</ItemGroup>
+
+</Project>
