@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -94,13 +93,13 @@ namespace {ns}
             if (item.Element("value")?.Value is string value)
                 sb.Append($@"
         ///<value>
-        /// {value}
+        /// <![CDATA[{value}]]>
         /// </value>");
 
             if (item.Element("comment")?.Value is string comment)
                 sb.Append($@"
         ///<remarks>
-        /// {comment}
+        /// <![CDATA[{comment}]]>
         /// </remarks>");
 
             sb.Append($@"
@@ -108,10 +107,10 @@ namespace {ns}
 ");
         }
 
-        sb.Append($@"    }}
-}}
+        sb.Append(@"    }
+}
 ");
 
-        context.AddSource($"{ns}{cls}.g.cs", sb.ToString());
+        context.AddSource($"{ns}.{cls}.g.cs", sb.ToString());
     }
 }
