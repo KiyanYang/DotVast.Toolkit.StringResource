@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
@@ -8,7 +8,7 @@
 
 		<PackageId>DotVast.Toolkit.StringResource</PackageId>
 		<Title>DotVast.Toolkit.StringResource</Title>
-		<Version>0.0.2</Version>
+		<Version>0.1.0</Version>
 		<Authors>DotVast</Authors>
 
 		<Copyright>Copyright © 2022 Kiyan Yang, All Rights Reserved.</Copyright>
