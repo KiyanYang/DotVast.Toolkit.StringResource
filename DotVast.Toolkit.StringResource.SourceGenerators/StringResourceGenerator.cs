@@ -32,19 +32,12 @@ public class StringResourceGenerator : IIncrementalGenerator
 
                     var args = GetAttributeCtorArgsValue(context.Attributes, TargetAttributeQualifiedName);
 
-                    return args?.Count switch
-                    {
-                        // Path
-                        1 => new StringResourceInfo(type, Path.Combine(basePath, args[0])),
-                        // Path, ExtensionMethod
-                        2 => new StringResourceInfo(type, Path.Combine(basePath, args[0]),
-                                                    exMethed: args[1]),
+                    return args is null ? null
                         // Path, ExtensionMethod, ExtensionMethodNamespace
-                        3 => new StringResourceInfo(type, Path.Combine(basePath, args[0]),
-                                                    exMethed: args[1],
-                                                    exMethedNamespace: args[2]),
-                        _ => null,
-                    };
+                        : new StringResourceInfo(type,
+                                                 Path.Combine(basePath, args[0]),
+                                                 exMethed: args[1],
+                                                 exMethedNamespace: args[2]);
                 })
             .Where(static i => i != null)!;
 
@@ -52,12 +45,12 @@ public class StringResourceGenerator : IIncrementalGenerator
             .Where(static i => i.ReswPath.EndsWith(".resw"))
             .Where(static i => File.Exists(i.ReswPath));
 
-        context.RegisterSourceOutput(strReswInfos, GenerateCode);
+        context.RegisterSourceOutput(infos, GenerateCode);
     }
 
-    private static IList<string>? GetAttributeCtorArgsValue(ImmutableArray<AttributeData> attributeData, string attributeQualifiedName) =>
+    private static IList<string?>? GetAttributeCtorArgsValue(ImmutableArray<AttributeData> attributeData, string attributeQualifiedName) =>
         attributeData.FirstOrDefault(a => a.AttributeClass?.HasFullyQualifiedName(attributeQualifiedName) == true)
-            ?.ConstructorArguments.Select(ca => ca.Value!.ToString()).ToList();
+            ?.ConstructorArguments.Select(ca => ca.Value?.ToString()).ToList();
 
     private static void GenerateCode(SourceProductionContext context, StringResourceInfo info)
     {

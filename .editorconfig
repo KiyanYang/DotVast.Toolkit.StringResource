@@ -49,12 +49,16 @@ csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
 #place a space character after the opening parenthesis and before the closing parenthesis of a method declaration parameter list.
 csharp_space_between_method_declaration_parameter_list_parentheses = false
 
-#Formatting - wrapping options
+# Wrap options https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/csharp-formatting-options#wrap-options
 
-#leave code block on separate lines
-csharp_preserve_single_line_blocks = false
+csharp_preserve_single_line_statements = false
+csharp_preserve_single_line_blocks = true
 
 #Style - Code block preferences
+
+#prefer curly braces even for one line of code
+csharp_prefer_braces = true:suggestion
+
 #Style - expression bodied member options
 
 #prefer expression bodies for accessors
@@ -83,6 +87,7 @@ dotnet_style_object_initializer = true:suggestion
 #Style - implicit and explicit types
 
 #prefer var over explicit type in all cases, unless overridden by another code style rule
+csharp_style_var_elsewhere = true:suggestion
 #prefer var is used to declare variables with built-in system types such as int
 csharp_style_var_for_built_in_types = true:suggestion
 #prefer var when the type is already mentioned on the right-hand side of a declaration expression
@@ -169,7 +174,7 @@ dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
 
 dotnet_naming_rule.constant_fields_should_be_pascal_case.severity = suggestion
 dotnet_naming_rule.constant_fields_should_be_pascal_case.symbols  = constant_fields
-dotnet_naming_rule.constant_fields_should_be_pascal_case.style = pascal_case
+dotnet_naming_rule.constant_fields_should_be_pascal_case.style    = pascal_case_style
 
 dotnet_naming_rule.private_static_fields_should_have_prefix.severity = suggestion
 dotnet_naming_rule.private_static_fields_should_have_prefix.symbols = private_static_fields

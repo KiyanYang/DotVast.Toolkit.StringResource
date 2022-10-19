@@ -8,10 +8,7 @@ public sealed class StringResourceAttribute : Attribute
     /// <summary>
     /// For example: "../Strings/Resources.resw"
     /// </summary>
-    public string Path
-    {
-        get;
-    }
+    public string Path { get; }
 
     /// <summary>
     /// For example: "GetLocalized()"
@@ -19,10 +16,7 @@ public sealed class StringResourceAttribute : Attribute
     /// Generator : public static ReswKey => "ReswKey".GetLocalized();
     /// </para>
     /// </summary>
-    public string? ExtensionMethod
-    {
-        get;
-    }
+    public string? ExtensionMethod { get; }
 
     /// <summary>
     /// For example: "App.Extensions"
@@ -30,17 +24,9 @@ public sealed class StringResourceAttribute : Attribute
     /// Generator : using App.Extensions;
     /// </para>
     /// </summary>
-    public string? ExtensionMethodNamespace
-    {
-        get;
-    }
+    public string? ExtensionMethodNamespace { get; }
 
-    public StringResourceAttribute(string path)
-    {
-        Path = path;
-    }
-
-    public StringResourceAttribute(string path, string extensionMethod, string? extensionMethodNamespace = null)
+    public StringResourceAttribute(string path, string? extensionMethod = null, string? extensionMethodNamespace = null)
     {
         Path = path;
         ExtensionMethod = extensionMethod;
