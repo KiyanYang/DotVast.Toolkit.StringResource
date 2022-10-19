@@ -23,20 +23,26 @@ public sealed class StringResourceInfo
 
     public string? ExMethed
     {
-        get; internal set;
+        get;
     }
 
     public string? ExMethedNamespace
     {
-        get; internal set;
+        get;
     }
 
-    public StringResourceInfo(ITypeSymbol type, string path)
+    public StringResourceInfo(ITypeSymbol type, string path) : this(type, path, null, null)
+    {
+    }
+
+    public StringResourceInfo(ITypeSymbol type, string path, string? exMethed = null, string? exMethedNamespace = null)
     {
         Namespace = type.ContainingNamespace.IsGlobalNamespace
             ? string.Empty
             : type.ContainingNamespace.ToDisplayString();
         Name = type.Name;
         ReswPath = Path.GetFullPath(path);
+        ExMethed = exMethed;
+        ExMethedNamespace = exMethedNamespace;
     }
 }

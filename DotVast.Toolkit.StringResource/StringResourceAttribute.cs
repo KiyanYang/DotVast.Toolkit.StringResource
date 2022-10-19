@@ -14,14 +14,11 @@ public sealed class StringResourceAttribute : Attribute
     }
 
     /// <summary>
-    /// For example: "GetLocalized"
+    /// For example: "GetLocalized()"
     /// <para>
     /// Generator : public static ReswKey => "ReswKey".GetLocalized();
     /// </para>
     /// </summary>
-    /// <remarks>
-    /// Must set ExtensionMethodNamespace, if you set this.
-    /// </remarks>
     public string? ExtensionMethod
     {
         get;
@@ -43,7 +40,7 @@ public sealed class StringResourceAttribute : Attribute
         Path = path;
     }
 
-    public StringResourceAttribute(string path, string extensionMethod, string extensionMethodNamespace)
+    public StringResourceAttribute(string path, string extensionMethod, string? extensionMethodNamespace = null)
     {
         Path = path;
         ExtensionMethod = extensionMethod;

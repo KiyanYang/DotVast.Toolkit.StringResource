@@ -36,12 +36,13 @@ public class StringResourceGenerator : IIncrementalGenerator
                     {
                         // Path
                         1 => new StringResourceInfo(type, Path.Combine(basePath, args[0])),
+                        // Path, ExtensionMethod
+                        2 => new StringResourceInfo(type, Path.Combine(basePath, args[0]),
+                                                    exMethed: args[1]),
                         // Path, ExtensionMethod, ExtensionMethodNamespace
-                        3 => new StringResourceInfo(type, Path.Combine(basePath, args[0]))
-                        {
-                            ExMethed = args[1],
-                            ExMethedNamespace = args[2]
-                        },
+                        3 => new StringResourceInfo(type, Path.Combine(basePath, args[0]),
+                                                    exMethed: args[1],
+                                                    exMethedNamespace: args[2]),
                         _ => null,
                     };
                 })
@@ -103,7 +104,7 @@ namespace {ns}
         /// </remarks>");
 
             sb.Append($@"
-        public static string {name} => ""{name}""{(exMethed != null ? $".{exMethed}()" : string.Empty)};
+        public static string {name} => ""{name}""{(exMethed != null ? $".{exMethed}" : string.Empty)};
 ");
         }
 
