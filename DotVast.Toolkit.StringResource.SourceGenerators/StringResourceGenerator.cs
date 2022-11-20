@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace DotVast.Toolkit.StringResource.SourceGenerators;
 
 [Generator(LanguageNames.CSharp)]
-public class StringResourceGenerator : IIncrementalGenerator
+public sealed class StringResourceGenerator : IIncrementalGenerator
 {
     private static readonly AssemblyName assemblyName = typeof(StringResourceGenerator).Assembly.GetName();
     private static readonly string GeneratedCodeAttribute = $"""
