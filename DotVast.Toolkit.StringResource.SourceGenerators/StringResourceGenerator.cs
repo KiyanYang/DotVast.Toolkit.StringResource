@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
@@ -13,6 +14,12 @@ namespace DotVast.Toolkit.StringResource.SourceGenerators;
 [Generator(LanguageNames.CSharp)]
 public class StringResourceGenerator : IIncrementalGenerator
 {
+    private static readonly AssemblyName assemblyName = typeof(StringResourceGenerator).Assembly.GetName();
+    private static readonly string GeneratedCodeAttribute = $"""
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("{assemblyName.Name}", "{assemblyName.Version}")]
+        """;
+    private const string ExcludeFromCodeCoverageAttribute = "[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]";
+
     private const string TargetAttributeName = "DotVast.Toolkit.StringResource.StringResourceAttribute";
     private const string TargetAttributeQualifiedName = "global::DotVast.Toolkit.StringResource.StringResourceAttribute";
 
@@ -100,6 +107,8 @@ public class StringResourceGenerator : IIncrementalGenerator
 
             var extension = info.ExtensionMethod != null ? $".{info.ExtensionMethod}" : string.Empty;
             sb.AppendLine($"""
+                    {GeneratedCodeAttribute}
+                    {ExcludeFromCodeCoverageAttribute}
                     public static string {name} => "{name}"{extension};
             """);
         }
