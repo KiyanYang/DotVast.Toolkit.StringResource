@@ -7,6 +7,7 @@
         <LangVersion>10.0</LangVersion>
 
         <Title>DotVast.Toolkit.StringResource</Title>
+        <Description>Realize the IntelliSense effect of resw file in WinUI3.</Description>
         <PackageId>DotVast.Toolkit.StringResource</PackageId>
         <PackageTags>winui3</PackageTags>
         
