@@ -15,8 +15,8 @@
 
 用于 WinUI3 项目，解决 `resw` 文件无智能感知的问题。
 
-使用方法：
+使用方法演示：
 
-- Demo: [DotVast.Toolkit.StringResource.Demo](./DotVast.Toolkit.StringResource.Demo/)
+- 简单 Demo: [DotVast.Toolkit.StringResource.Demo](./DotVast.Toolkit.StringResource.Demo/)
 
-- WinUI 项目使用: [DotVast.HashTool.WinUI](https://github.com/KiyanYang/DotVast.HashTool.WinUI/blob/3f192b525c45e6ff8553a5ca21ca042dad34a67b/DotVast.HashTool.WinUI/Strings/Localization.cs)
+- WinUI 项目: [DotVast.HashTool.WinUI](https://github.com/KiyanYang/DotVast.HashTool.WinUI/blob/main/DotVast.HashTool.WinUI/Strings/Localization.cs)
