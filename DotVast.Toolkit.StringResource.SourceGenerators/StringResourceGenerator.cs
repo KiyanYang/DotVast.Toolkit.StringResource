@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -19,46 +18,44 @@ public class StringResourceGenerator : IIncrementalGenerator
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        IncrementalValuesProvider<StringResourceInfo> strReswInfos = context.SyntaxProvider
+        IncrementalValuesProvider<StringResourceInfo> infos = context.SyntaxProvider
             .ForAttributeWithMetadataName(
                 TargetAttributeName,
                 static (node, _) => node is ClassDeclarationSyntax n && n.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)),
-                static (context, c) =>
+                static (context, _) =>
                 {
-                    if (context.TargetSymbol is not ITypeSymbol type)
-                        return null;
+                    if (context.TargetSymbol is not ITypeSymbol type
+                        || GetAttributeCtorArgsValue(context.Attributes, TargetAttributeQualifiedName) is not string?[] args)
+                    {
+                        return default;
+                    }
 
+                    // args = [Path, ExtensionMethod, ExtensionMethodNamespace]
                     var basePath = context.TargetNode.SyntaxTree.FilePath;
+                    var fullPath = Path.GetFullPath(Path.Combine(basePath, args[0]));
+                    if (!fullPath.EndsWith(".resw") || !File.Exists(fullPath))
+                    {
+                        return default;
+                    }
 
-                    var args = GetAttributeCtorArgsValue(context.Attributes, TargetAttributeQualifiedName);
+                    var classNamespace = type.ContainingNamespace.IsGlobalNamespace
+                        ? string.Empty
+                        : type.ContainingNamespace.ToDisplayString();
+                    var className = type.Name;
 
-                    return args is null ? null
-                        // Path, ExtensionMethod, ExtensionMethodNamespace
-                        : new StringResourceInfo(type,
-                                                 Path.Combine(basePath, args[0]),
-                                                 exMethed: args[1],
-                                                 exMethedNamespace: args[2]);
+                    return new StringResourceInfo(classNamespace, className, File.ReadAllText(fullPath), args[1], args[2]);
                 })
-            .Where(static i => i != null)!;
-
-        var infos = strReswInfos
-            .Where(static i => i.ReswPath.EndsWith(".resw"))
-            .Where(static i => File.Exists(i.ReswPath));
+            .Where(static i => i != default);
 
         context.RegisterSourceOutput(infos, GenerateCode);
     }
 
-    private static IList<string?>? GetAttributeCtorArgsValue(ImmutableArray<AttributeData> attributeData, string attributeQualifiedName) =>
+    private static string?[]? GetAttributeCtorArgsValue(ImmutableArray<AttributeData> attributeData, string attributeQualifiedName) =>
         attributeData.FirstOrDefault(a => a.AttributeClass?.HasFullyQualifiedName(attributeQualifiedName) == true)
-            ?.ConstructorArguments.Select(ca => ca.Value?.ToString()).ToList();
+            ?.ConstructorArguments.Select(ca => ca.Value?.ToString()).ToArray();
 
     private static void GenerateCode(SourceProductionContext context, StringResourceInfo info)
     {
-        var ns = info.Namespace;
-        var cls = info.Name;
-        var path = info.ReswPath;
-        var exMethed = info.ExMethed;
-        var exMethedNs = info.ExMethedNamespace;
         var sb = new StringBuilder();
 
         sb.AppendLine("""
@@ -68,20 +65,20 @@ public class StringResourceGenerator : IIncrementalGenerator
 
             """);
 
-        if (exMethedNs != null)
+        if (info.ExtensionMethedNamespace != null)
             sb.AppendLine($"""
-            using {exMethedNs};
+            using {info.ExtensionMethedNamespace};
 
             """);
 
         sb.Append($$"""
-            namespace {{ns}}
+            namespace {{info.Namespace}}
             {
-                partial class {{cls}}
+                partial class {{info.Name}}
                 {
             """);
 
-        foreach (var item in XElement.Load(path).Elements("data"))
+        foreach (var item in XElement.Parse(info.Resw).Elements("data"))
         {
             if (item.Attribute("name")?.Value is not string name || name.Contains("."))
                 continue;
@@ -101,8 +98,9 @@ public class StringResourceGenerator : IIncrementalGenerator
                     /// </remarks>
             """);
 
+            var extension = info.ExtensionMethod != null ? $".{info.ExtensionMethod}" : string.Empty;
             sb.AppendLine($"""
-                    public static string {name} => "{name}"{(exMethed != null ? $".{exMethed}" : string.Empty)};
+                    public static string {name} => "{name}"{extension};
             """);
         }
 
@@ -111,6 +109,6 @@ public class StringResourceGenerator : IIncrementalGenerator
             }
             """);
 
-        context.AddSource($"{ns}.{cls}.g.cs", sb.ToString());
+        context.AddSource($"{info.Namespace}.{info.Name}.g.cs", sb.ToString());
     }
 }
