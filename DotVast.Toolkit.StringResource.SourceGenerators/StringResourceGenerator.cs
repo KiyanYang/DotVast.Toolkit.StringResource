@@ -48,8 +48,9 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
                         ? string.Empty
                         : type.ContainingNamespace.ToDisplayString();
                     var className = type.Name;
+                    var lastWriteTime = File.GetLastWriteTime(fullPath);
 
-                    return new StringResourceInfo(classNamespace, className, File.ReadAllText(fullPath), args[1], args[2]);
+                    return new StringResourceInfo(classNamespace, className, fullPath, lastWriteTime, args[1], args[2]);
                 })
             .Where(static i => i != default);
 
@@ -85,7 +86,7 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
                 {
             """);
 
-        foreach (var item in XElement.Parse(info.Resw).Elements("data"))
+        foreach (var item in XElement.Load(info.ReswPath).Elements("data"))
         {
             if (item.Attribute("name")?.Value is not string name || name.Contains("."))
                 continue;
