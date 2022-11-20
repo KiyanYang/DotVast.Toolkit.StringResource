@@ -62,6 +62,7 @@ public class StringResourceGenerator : IIncrementalGenerator
 
     private static void GenerateCode(SourceProductionContext context, StringResourceInfo info)
     {
+        var extension = info.ExtensionMethod != null ? $".{info.ExtensionMethod}" : string.Empty;
         var sb = new StringBuilder();
 
         sb.AppendLine("""
@@ -104,7 +105,6 @@ public class StringResourceGenerator : IIncrementalGenerator
                     /// </remarks>
             """);
 
-            var extension = info.ExtensionMethod != null ? $".{info.ExtensionMethod}" : string.Empty;
             sb.AppendLine($"""
                     {GeneratedCodeAttribute}
                     {ExcludeFromCodeCoverageAttribute}
