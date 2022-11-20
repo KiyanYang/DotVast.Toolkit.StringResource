@@ -6,9 +6,10 @@
         <Nullable>enable</Nullable>
         <LangVersion>10.0</LangVersion>
 
-        <PackageId>DotVast.Toolkit.StringResource</PackageId>
         <Title>DotVast.Toolkit.StringResource</Title>
-
+        <PackageId>DotVast.Toolkit.StringResource</PackageId>
+        <PackageTags>winui3</PackageTags>
+        
         <Copyright>Copyright © Kiyan Yang, All Rights Reserved.</Copyright>
         <PackageProjectUrl>https://github.com/KiyanYang/DotVast.Toolkit.StringResource</PackageProjectUrl>
         <RepositoryUrl>https://github.com/KiyanYang/DotVast.Toolkit.StringResource</RepositoryUrl>
