@@ -8,8 +8,6 @@
 
         <PackageId>DotVast.Toolkit.StringResource</PackageId>
         <Title>DotVast.Toolkit.StringResource</Title>
-        <Version>0.2.0</Version>
-        <Authors>DotVast</Authors>
 
         <Copyright>Copyright © 2022 Kiyan Yang, All Rights Reserved.</Copyright>
         <PackageProjectUrl>https://github.com/KiyanYang/DotVast.Toolkit.StringResource</PackageProjectUrl>
