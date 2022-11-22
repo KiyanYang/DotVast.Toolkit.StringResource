@@ -3,7 +3,7 @@ using System;
 namespace DotVast.Toolkit.StringResource.SourceGenerators;
 
 public record struct StringResourceInfo(
-    string Namespace,
+    string? Namespace,
     string Name,
     string ReswPath,
     DateTime ReswLastWriteTime,

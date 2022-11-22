@@ -45,7 +45,7 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
                     }
 
                     var classNamespace = type.ContainingNamespace.IsGlobalNamespace
-                        ? string.Empty
+                        ? null
                         : type.ContainingNamespace.ToDisplayString();
                     var className = type.Name;
                     var lastWriteTime = File.GetLastWriteTime(fullPath);
@@ -79,11 +79,15 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
 
             """);
 
+        if (info.Namespace != null)
+            sb.AppendLine($"""
+            namespace {info.Namespace};
+
+            """);
+
         sb.Append($$"""
-            namespace {{info.Namespace}}
+            partial class {{info.Name}}
             {
-                partial class {{info.Name}}
-                {
             """);
 
         foreach (var item in XElement.Load(info.ReswPath).Elements("data"))
@@ -94,30 +98,30 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
             if (item.Element("value")?.Value is string value)
                 sb.AppendLine($"""
 
-                    /// <value>
-                    /// <![CDATA[{value}]]>
-                    /// </value>
+                /// <value>
+                /// <![CDATA[{value}]]>
+                /// </value>
             """);
 
             if (item.Element("comment")?.Value is string comment)
                 sb.AppendLine($"""
-                    /// <remarks>
-                    /// <![CDATA[{comment}]]>
-                    /// </remarks>
+                /// <remarks>
+                /// <![CDATA[{comment}]]>
+                /// </remarks>
             """);
 
             sb.AppendLine($"""
-                    {GeneratedCodeAttribute}
-                    {ExcludeFromCodeCoverageAttribute}
-                    public static string {name} => "{name}"{extension};
+                {GeneratedCodeAttribute}
+                {ExcludeFromCodeCoverageAttribute}
+                public static string {name} => "{name}"{extension};
             """);
         }
 
         sb.AppendLine("""
-                }
             }
             """);
 
-        context.AddSource($"{info.Namespace}.{info.Name}.g.cs", sb.ToString());
+        var qualifiedName = info.Namespace == null ? info.Name : $"{info.Namespace}.{info.Name}";
+        context.AddSource($"{qualifiedName}.g.cs", sb.ToString());
     }
 }
