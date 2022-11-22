@@ -31,4 +31,4 @@ internal class Program
 // Localized TestB
 // Localized TestC
 // Localized TestD
-// Localized TestDialog
+// Val: Localized TestDialog, Arg: Dialog

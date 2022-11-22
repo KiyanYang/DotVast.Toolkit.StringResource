@@ -8,6 +8,12 @@ internal static class StringExtension
         return val;
     }
 
+    public static string GetLocalized(this string str, string arg)
+    {
+        var val = VirtualGetLocalized(str);
+        return $"Val: {val}, Arg: {arg}";
+    }
+
     private static string VirtualGetLocalized(string str) =>
         $"Localized {str}";
 }
