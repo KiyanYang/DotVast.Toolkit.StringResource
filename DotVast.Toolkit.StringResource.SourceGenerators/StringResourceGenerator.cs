@@ -31,14 +31,21 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
                 static (context, _) =>
                 {
                     if (context.TargetSymbol is not ITypeSymbol type
-                        || GetAttributeCtorArgsValue(context.Attributes, TargetAttributeQualifiedName) is not string?[] args)
+                        || GetAttributeCtorArgsValue(context.Attributes, TargetAttributeQualifiedName) is not object?[] args)
                     {
                         return default;
                     }
 
-                    // args = [Path, ExtensionMethod, ExtensionMethodNamespace]
+                    var (path, extensionMethod, extensionMethodNamespace) = args.Length switch
+                    {
+                        1 => (args[0] as string, null, null),
+                        2 => (args[0] as string, args[1] as string, null),
+                        3 => (args[0] as string, args[1] as string, args[2] as string),
+                        _ => (null, null, null),
+                    };
+
                     var basePath = context.TargetNode.SyntaxTree.FilePath;
-                    var fullPath = Path.GetFullPath(Path.Combine(basePath, args[0]));
+                    var fullPath = Path.GetFullPath(Path.Combine(basePath, path));
                     if (!fullPath.EndsWith(".resw") || !File.Exists(fullPath))
                     {
                         return default;
@@ -50,16 +57,16 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
                     var className = type.Name;
                     var lastWriteTime = File.GetLastWriteTime(fullPath);
 
-                    return new StringResourceInfo(classNamespace, className, fullPath, lastWriteTime, args[1], args[2]);
+                    return new StringResourceInfo(classNamespace, className, fullPath, lastWriteTime, extensionMethod, extensionMethodNamespace);
                 })
             .Where(static i => i != default);
 
         context.RegisterSourceOutput(infos, GenerateCode);
     }
 
-    private static string?[]? GetAttributeCtorArgsValue(ImmutableArray<AttributeData> attributeData, string attributeQualifiedName) =>
-        attributeData.FirstOrDefault(a => a.AttributeClass?.HasFullyQualifiedName(attributeQualifiedName) == true)
-            ?.ConstructorArguments.Select(ca => ca.Value?.ToString()).ToArray();
+    private static object?[]? GetAttributeCtorArgsValue(ImmutableArray<AttributeData> attributeData, string attributeQualifiedName) =>
+        attributeData.FirstOrDefault(d => d.AttributeClass?.HasFullyQualifiedName(attributeQualifiedName) == true)
+            ?.ConstructorArguments.Select(arg => arg.Value).ToArray();
 
     private static void GenerateCode(SourceProductionContext context, StringResourceInfo info)
     {

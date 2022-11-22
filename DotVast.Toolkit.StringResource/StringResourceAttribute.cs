@@ -26,7 +26,19 @@ public sealed class StringResourceAttribute : Attribute
     /// </summary>
     public string? ExtensionMethodNamespace { get; }
 
-    public StringResourceAttribute(string path, string? extensionMethod = null, string? extensionMethodNamespace = null)
+
+    public StringResourceAttribute(string path)
+    {
+        Path = path;
+    }
+
+    public StringResourceAttribute(string path, string extensionMethod)
+    {
+        Path = path;
+        ExtensionMethod = extensionMethod;
+    }
+
+    public StringResourceAttribute(string path, string extensionMethod, string extensionMethodNamespace)
     {
         Path = path;
         ExtensionMethod = extensionMethod;
