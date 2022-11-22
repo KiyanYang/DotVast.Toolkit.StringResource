@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Xml.Linq;
 
 using Microsoft.CodeAnalysis;
@@ -25,48 +26,53 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         IncrementalValuesProvider<StringResourceInfo> infos = context.SyntaxProvider
-            .ForAttributeWithMetadataName(
-                TargetAttributeName,
-                static (node, _) => node is ClassDeclarationSyntax n,
-                static (context, _) =>
-                {
-                    if (context.TargetSymbol is not ITypeSymbol type
-                        || GetAttributeCtorArgsValue(context.Attributes, TargetAttributeQualifiedName) is not object?[] args)
-                    {
-                        return default;
-                    }
-
-                    var (path, extensionMethod, extensionMethodNamespace) = args.Length switch
-                    {
-                        1 => (args[0] as string, null, null),
-                        2 => (args[0] as string, args[1] as string, null),
-                        3 => (args[0] as string, args[1] as string, args[2] as string),
-                        _ => (null, null, null),
-                    };
-
-                    var basePath = context.TargetNode.SyntaxTree.FilePath;
-                    var fullPath = Path.GetFullPath(Path.Combine(basePath, path));
-                    if (!fullPath.EndsWith(".resw") || !File.Exists(fullPath))
-                    {
-                        return default;
-                    }
-
-                    var classNamespace = type.ContainingNamespace.IsGlobalNamespace
-                        ? null
-                        : type.ContainingNamespace.ToDisplayString();
-                    var className = type.Name;
-                    var lastWriteTime = File.GetLastWriteTime(fullPath);
-
-                    return new StringResourceInfo(classNamespace, className, fullPath, lastWriteTime, extensionMethod, extensionMethodNamespace);
-                })
+            .ForAttributeWithMetadataName(TargetAttributeName, Predicate, Transfrom)
             .Where(static i => i != default);
 
         context.RegisterSourceOutput(infos, GenerateCode);
     }
 
-    private static object?[]? GetAttributeCtorArgsValue(ImmutableArray<AttributeData> attributeData, string attributeQualifiedName) =>
-        attributeData.FirstOrDefault(d => d.AttributeClass?.HasFullyQualifiedName(attributeQualifiedName) == true)
-            ?.ConstructorArguments.Select(arg => arg.Value).ToArray();
+    private static bool Predicate(SyntaxNode node, CancellationToken token) =>
+        node is ClassDeclarationSyntax;
+
+    private static StringResourceInfo Transfrom(GeneratorAttributeSyntaxContext context, CancellationToken token)
+    {
+        if (context.TargetSymbol is not ITypeSymbol type
+            || GetAttributeCtorArgsValue(context.Attributes, TargetAttributeQualifiedName) is not object?[] args)
+        {
+            return default;
+        }
+
+        // see DotVast.Toolkit.StringResource.StringResourceAttribute..ctor
+        var (reswPath, extensionMethod, extensionMethodNamespace) = args.Length switch
+        {
+            1 => (args[0] as string, null, null),
+            2 => (args[0] as string, args[1] as string, null),
+            3 => (args[0] as string, args[1] as string, args[2] as string),
+            _ => (null, null, null),
+        };
+
+        var basePath = context.TargetNode.SyntaxTree.FilePath;
+        var fullPath = Path.GetFullPath(Path.Combine(basePath, reswPath?.Trim() ?? string.Empty));
+        if (!fullPath.EndsWith(".resw", System.StringComparison.OrdinalIgnoreCase) || !File.Exists(fullPath))
+        {
+            return default;
+        }
+
+        var classNamespace = type.ContainingNamespace.IsGlobalNamespace
+            ? null
+            : type.ContainingNamespace.ToDisplayString();
+        var className = type.Name;
+        var lastWriteTime = File.GetLastWriteTime(fullPath);
+
+        extensionMethod = extensionMethod?.Trim();
+        extensionMethod = extensionMethod != null && !extensionMethod.EndsWith(")")
+            ? $"{extensionMethod}()"
+            : extensionMethod;
+        extensionMethodNamespace = extensionMethodNamespace?.Trim();
+
+        return new StringResourceInfo(classNamespace, className, fullPath, lastWriteTime, extensionMethod, extensionMethodNamespace);
+    }
 
     private static void GenerateCode(SourceProductionContext context, StringResourceInfo info)
     {
@@ -131,4 +137,8 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
         var qualifiedName = info.Namespace == null ? info.Name : $"{info.Namespace}.{info.Name}";
         context.AddSource($"{qualifiedName}.g.cs", sb.ToString());
     }
+
+    private static object?[]? GetAttributeCtorArgsValue(ImmutableArray<AttributeData> attributeData, string attributeQualifiedName) =>
+        attributeData.FirstOrDefault(d => d.AttributeClass?.HasFullyQualifiedName(attributeQualifiedName) == true)
+            ?.ConstructorArguments.Select(arg => arg.Value).ToArray();
 }
