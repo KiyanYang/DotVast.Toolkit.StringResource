@@ -3,14 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotVast.Toolkit.StringResource", "DotVast.Toolkit.StringResource\DotVast.Toolkit.StringResource.csproj", "{030B10B8-FD77-4D73-8B89-6092B146D2CD}"
-	ProjectSection(ProjectDependencies) = postProject
-		{839E691F-7BF5-4DD6-9AE7-4207C1E80886} = {839E691F-7BF5-4DD6-9AE7-4207C1E80886}
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotVast.Toolkit.StringResource", "DotVast.Toolkit.StringResource\DotVast.Toolkit.StringResource.csproj", "{030B10B8-FD77-4D73-8B89-6092B146D2CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotVast.Toolkit.StringResource.SourceGenerators", "DotVast.Toolkit.StringResource.SourceGenerators\DotVast.Toolkit.StringResource.SourceGenerators.csproj", "{839E691F-7BF5-4DD6-9AE7-4207C1E80886}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotVast.Toolkit.StringResource.SourceGenerators", "DotVast.Toolkit.StringResource.SourceGenerators\DotVast.Toolkit.StringResource.SourceGenerators.csproj", "{839E691F-7BF5-4DD6-9AE7-4207C1E80886}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotVast.Toolkit.StringResource.Demo", "DotVast.Toolkit.StringResource.Demo\DotVast.Toolkit.StringResource.Demo.csproj", "{0E63C1E2-D93B-4C47-8002-4A970AD27BE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotVast.Toolkit.StringResource.Demo", "DotVast.Toolkit.StringResource.Demo\DotVast.Toolkit.StringResource.Demo.csproj", "{0E63C1E2-D93B-4C47-8002-4A970AD27BE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
