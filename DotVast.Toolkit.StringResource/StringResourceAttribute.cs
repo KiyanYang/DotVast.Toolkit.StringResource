@@ -26,7 +26,6 @@ public sealed class StringResourceAttribute : Attribute
     /// </summary>
     public string? ExtensionMethodNamespace { get; }
 
-
     public StringResourceAttribute(string path)
     {
         Path = path;

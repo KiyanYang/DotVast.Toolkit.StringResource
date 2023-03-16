@@ -1,4 +1,6 @@
-using System.Collections.Immutable;
+//#define LAUNCH_DEBUGGER
+
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -20,13 +22,18 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
         """;
     private const string ExcludeFromCodeCoverageAttribute = "[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]";
 
-    private const string TargetAttributeName = "DotVast.Toolkit.StringResource.StringResourceAttribute";
-    private const string TargetAttributeQualifiedName = "global::DotVast.Toolkit.StringResource.StringResourceAttribute";
+    private const string StringResourceAttributeName = "DotVast.Toolkit.StringResource.StringResourceAttribute";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+#if LAUNCH_DEBUGGER
+        if (!Debugger.IsAttached)
+        {
+            Debugger.Launch();
+        }
+#endif
         var infos = context.SyntaxProvider
-            .ForAttributeWithMetadataName(TargetAttributeName, Predicate, Transfrom)
+            .ForAttributeWithMetadataName(StringResourceAttributeName, Predicate, Transfrom)
             .Where(static i => i != default);
 
         context.RegisterSourceOutput(infos, GenerateCode);
@@ -37,14 +44,19 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
 
     private static StringResourceInfo Transfrom(GeneratorAttributeSyntaxContext context, CancellationToken token)
     {
-        if (context.TargetSymbol is not ITypeSymbol type
-            || GetAttributeCtorArgsValue(context.Attributes, TargetAttributeQualifiedName) is not object?[] args)
+        if (context.TargetSymbol is not ITypeSymbol type)
+        {
+            return default;
+        }
+
+        // context.Attributes 仅包含目标特性
+        if (GetAttributeCtorArgsValue(context.Attributes.FirstOrDefault()) is not object[] args)
         {
             return default;
         }
 
         // see DotVast.Toolkit.StringResource.StringResourceAttribute..ctor
-        var (reswPath, extensionMethod, extensionMethodNamespace) = args.Length switch
+        var (reswPath, extensionMethodName, extensionNamespaceName) = args.Length switch
         {
             1 => (args[0] as string, null, null),
             2 => (args[0] as string, args[1] as string, null),
@@ -59,24 +71,24 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
             return default;
         }
 
-        var classNamespace = type.ContainingNamespace.IsGlobalNamespace
+        var lastWriteTime = File.GetLastWriteTime(fullPath);
+        var className = type.Name;
+        var namespaceName = type.ContainingNamespace.IsGlobalNamespace
             ? null
             : type.ContainingNamespace.ToDisplayString();
-        var className = type.Name;
-        var lastWriteTime = File.GetLastWriteTime(fullPath);
 
-        extensionMethod = extensionMethod?.Trim();
-        extensionMethod = extensionMethod != null && !extensionMethod.EndsWith(")")
-            ? $"{extensionMethod}()"
-            : extensionMethod;
-        extensionMethodNamespace = extensionMethodNamespace?.Trim();
+        extensionMethodName = extensionMethodName?.Trim();
+        extensionMethodName = extensionMethodName is not null && !extensionMethodName.EndsWith(")")
+            ? $"{extensionMethodName}()"
+            : extensionMethodName;
+        extensionNamespaceName = extensionNamespaceName?.Trim();
 
-        return new StringResourceInfo(classNamespace, className, fullPath, lastWriteTime, extensionMethod, extensionMethodNamespace);
+        return new StringResourceInfo(fullPath, lastWriteTime, className, namespaceName, extensionMethodName, extensionNamespaceName);
     }
 
     private static void GenerateCode(SourceProductionContext context, StringResourceInfo info)
     {
-        var extension = info.ExtensionMethod != null ? $".{info.ExtensionMethod}" : string.Empty;
+        var extension = info.ExtensionMethodName != null ? $".{info.ExtensionMethodName}" : string.Empty;
         var sb = new StringBuilder();
 
         sb.AppendLine("""
@@ -86,42 +98,52 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
             
             """);
 
-        if (info.ExtensionMethedNamespace != null)
+        if (info.NamespaceName != null)
+        {
             sb.AppendLine($"""
-            using {info.ExtensionMethedNamespace};
+            namespace {info.NamespaceName};
 
             """);
+        }
 
-        if (info.Namespace != null)
+        if (info.ExtensionNamespaceName != null)
+        {
             sb.AppendLine($"""
-            namespace {info.Namespace};
+            using {info.ExtensionNamespaceName};
 
             """);
+        }
 
         sb.Append($$"""
-            partial class {{info.Name}}
+            partial class {{info.ClassName}}
             {
             """);
 
         foreach (var item in XElement.Load(info.ReswPath).Elements("data"))
         {
             if (item.Attribute("name")?.Value is not string name || name.Contains("."))
+            {
                 continue;
+            }
 
             if (item.Element("value")?.Value is string value)
+            {
                 sb.AppendLine($"""
 
                 /// <value>
                 /// <![CDATA[{value}]]>
                 /// </value>
             """);
+            }
 
             if (item.Element("comment")?.Value is string comment)
+            {
                 sb.AppendLine($"""
                 /// <remarks>
                 /// <![CDATA[{comment}]]>
                 /// </remarks>
             """);
+            }
 
             sb.AppendLine($"""
                 {s_generatedCodeAttribute}
@@ -134,11 +156,10 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
             }
             """);
 
-        var qualifiedName = info.Namespace == null ? info.Name : $"{info.Namespace}.{info.Name}";
+        var qualifiedName = info.NamespaceName is null ? info.ClassName : $"{info.NamespaceName}.{info.ClassName}";
         context.AddSource($"{qualifiedName}.g.cs", sb.ToString());
     }
 
-    private static object?[]? GetAttributeCtorArgsValue(ImmutableArray<AttributeData> attributeData, string attributeQualifiedName) =>
-        attributeData.FirstOrDefault(d => d.AttributeClass?.HasFullyQualifiedName(attributeQualifiedName) == true)
-            ?.ConstructorArguments.Select(arg => arg.Value).ToArray();
+    private static object?[]? GetAttributeCtorArgsValue(AttributeData? attributeData) =>
+        attributeData?.ConstructorArguments.Select(arg => arg.Value).ToArray();
 }

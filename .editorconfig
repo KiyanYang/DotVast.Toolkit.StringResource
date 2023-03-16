@@ -54,7 +54,7 @@ csharp_preserve_single_line_blocks = true
 
 #Style - Code block preferences
 
-csharp_prefer_braces = false:suggestion
+csharp_prefer_braces = true:suggestion
 
 #Style - expression bodied member options
 
