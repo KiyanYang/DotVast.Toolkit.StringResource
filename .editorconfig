@@ -1,12 +1,10 @@
-# Rules in this file were initially inferred by Visual Studio IntelliCode from the Template Studio codebase.
-# You can modify the rules from these initially generated values to suit your own policies.
-# You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference.
+# https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference.
 
 [*]
 charset = utf-8
-insert_final_newline = true
 indent_style = space
 indent_size = 4
+insert_final_newline = true
 trim_trailing_whitespace = true
 
 [*.cs]
@@ -56,8 +54,7 @@ csharp_preserve_single_line_blocks = true
 
 #Style - Code block preferences
 
-#prefer curly braces even for one line of code
-csharp_prefer_braces = true:suggestion
+csharp_prefer_braces = false:suggestion
 
 #Style - expression bodied member options
 

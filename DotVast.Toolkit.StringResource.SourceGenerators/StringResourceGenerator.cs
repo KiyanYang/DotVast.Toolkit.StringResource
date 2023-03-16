@@ -14,9 +14,9 @@ namespace DotVast.Toolkit.StringResource.SourceGenerators;
 [Generator(LanguageNames.CSharp)]
 public sealed class StringResourceGenerator : IIncrementalGenerator
 {
-    private static readonly AssemblyName assemblyName = typeof(StringResourceGenerator).Assembly.GetName();
-    private static readonly string GeneratedCodeAttribute = $"""
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("{assemblyName.Name}", "{assemblyName.Version}")]
+    private static readonly AssemblyName s_assemblyName = typeof(StringResourceGenerator).Assembly.GetName();
+    private static readonly string s_generatedCodeAttribute = $"""
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("{s_assemblyName.Name}", "{s_assemblyName.Version}")]
         """;
     private const string ExcludeFromCodeCoverageAttribute = "[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]";
 
@@ -25,7 +25,7 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        IncrementalValuesProvider<StringResourceInfo> infos = context.SyntaxProvider
+        var infos = context.SyntaxProvider
             .ForAttributeWithMetadataName(TargetAttributeName, Predicate, Transfrom)
             .Where(static i => i != default);
 
@@ -124,7 +124,7 @@ public sealed class StringResourceGenerator : IIncrementalGenerator
             """);
 
             sb.AppendLine($"""
-                {GeneratedCodeAttribute}
+                {s_generatedCodeAttribute}
                 {ExcludeFromCodeCoverageAttribute}
                 public static string {name} => "{name}"{extension};
             """);
