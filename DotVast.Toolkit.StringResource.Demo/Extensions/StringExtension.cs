@@ -1,4 +1,4 @@
-namespace DotVast.Toolkit.StringResource.Demo;
+namespace DotVast.Toolkit.StringResource.Demo.Extensions;
 
 internal static class StringExtension
 {
@@ -15,5 +15,5 @@ internal static class StringExtension
     }
 
     private static string VirtualGetLocalized(string str) =>
-        $"Localized {str}";
+        $"Localized_{str}";
 }
