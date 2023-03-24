@@ -11,36 +11,30 @@ public sealed class StringResourceAttribute : Attribute
     public string Path { get; }
 
     /// <summary>
-    /// For example: "GetLocalized()"
+    /// For example: "public static {0} => "{0}".GetLocalized();"
     /// <para>
-    /// Generator : public static ReswKey => "ReswKey".GetLocalized();
+    /// Generator: public static ReswKey => "ReswKey".GetLocalized();
     /// </para>
     /// </summary>
-    public string? ExtensionMethod { get; }
+    public string PropertyFormat { get; }
 
     /// <summary>
-    /// For example: "App.Extensions"
-    /// <para>
-    /// Generator : using App.Extensions;
-    /// </para>
+    /// For example: "using App.Extensions;"
     /// </summary>
-    public string? ExtensionMethodNamespace { get; }
+    public string? UsingsFormat { get; }
 
-    public StringResourceAttribute(string path)
+    public StringResourceAttribute(string path, string propertyFormat)
     {
         Path = path;
+        PropertyFormat = propertyFormat;
     }
 
-    public StringResourceAttribute(string path, string extensionMethod)
+    public StringResourceAttribute(string path, string propertyFormat, string usingsFormat)
     {
         Path = path;
-        ExtensionMethod = extensionMethod;
+        PropertyFormat = propertyFormat;
+        UsingsFormat = usingsFormat;
     }
 
-    public StringResourceAttribute(string path, string extensionMethod, string extensionMethodNamespace)
-    {
-        Path = path;
-        ExtensionMethod = extensionMethod;
-        ExtensionMethodNamespace = extensionMethodNamespace;
-    }
+    public const string PublicStatic = "public static string {0} => \"{0}\";";
 }

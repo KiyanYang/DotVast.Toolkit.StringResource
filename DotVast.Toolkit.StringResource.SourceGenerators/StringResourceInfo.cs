@@ -6,6 +6,6 @@ public record struct StringResourceInfo(
     string ReswPath,
     DateTime ReswLastWriteTime,
     string ClassName,
-    string? NamespaceName,
-    string? ExtensionMethodName,
-    string? ExtensionNamespaceName);
+    string NamespaceName,
+    string PropertyFormat,
+    string? Usings);
