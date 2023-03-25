@@ -7,9 +7,9 @@
         <LangVersion>10.0</LangVersion>
 
         <Title>DotVast.Toolkit.StringResource</Title>
-        <Description>Realize the IntelliSense effect of resw file in WinUI3.</Description>
+        <Description>Realize the IntelliSense effect of resw file.</Description>
         <PackageId>DotVast.Toolkit.StringResource</PackageId>
-        <PackageTags>winui3</PackageTags>
+        <PackageTags>resw;resx;winui3</PackageTags>
         
         <Copyright>Copyright © Kiyan Yang, All Rights Reserved.</Copyright>
         <PackageProjectUrl>https://github.com/KiyanYang/DotVast.Toolkit.StringResource</PackageProjectUrl>
