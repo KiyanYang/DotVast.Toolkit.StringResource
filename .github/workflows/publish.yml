@@ -1,0 +1,28 @@
+name: publish to nuget
+
+on:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: pwsh
+
+    env:
+      DotVast_ProjectPath: DotVast.Toolkit.StringResource/DotVast.Toolkit.StringResource.csproj
+      DotVast_NugetSource: https://api.nuget.org/v3/index.json
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Pack
+        run: dotnet pack $env:DotVast_ProjectPath --configuration Release --output .
+
+      - name: Push
+        run: dotnet nuget push '*.nupkg' --source $env:DotVast_NugetSource --api-key ${{ secrets.NUGET_API_KEY }}
