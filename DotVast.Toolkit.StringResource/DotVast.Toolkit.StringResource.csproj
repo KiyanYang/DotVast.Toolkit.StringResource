@@ -10,6 +10,7 @@
         <Description>Realize the IntelliSense effect of resw file.</Description>
         <PackageId>DotVast.Toolkit.StringResource</PackageId>
         <PackageTags>resw;resx;winui3</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
 
         <Copyright>Copyright © Kiyan Yang, All Rights Reserved.</Copyright>
         <PackageProjectUrl>https://github.com/KiyanYang/DotVast.Toolkit.StringResource</PackageProjectUrl>
@@ -38,6 +39,7 @@
 
     <ItemGroup>
         <None Include="..\DotVast.Toolkit.StringResource.SourceGenerators\bin\$(Configuration)\netstandard2.0\DotVast.Toolkit.StringResource.SourceGenerators.dll" Pack="true" PackagePath="analyzers\dotnet\cs" Visible="false" />
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

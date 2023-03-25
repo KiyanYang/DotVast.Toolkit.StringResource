@@ -1,5 +1,3 @@
-<div align="center">
-
 # DotVast.Toolkit.StringResource
 
 **用于解决 `resw` 文件无智能感知的问题。**
@@ -9,11 +7,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/KiyanYang/DotVast.Toolkit.StringResource)](https://github.com/KiyanYang/DotVast.Toolkit.StringResource/issues)
 [![Nuget](https://img.shields.io/nuget/dt/DotVast.Toolkit.StringResource)](https://www.nuget.org/packages/DotVast.Toolkit.StringResource/)
 
-</div>
-
 ---
-
-用于解决 `resw` 文件无智能感知的问题。
 
 使用方法：
 
