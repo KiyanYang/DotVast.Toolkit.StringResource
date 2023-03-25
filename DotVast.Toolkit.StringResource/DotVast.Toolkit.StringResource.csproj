@@ -10,15 +10,27 @@
         <Description>Realize the IntelliSense effect of resw file.</Description>
         <PackageId>DotVast.Toolkit.StringResource</PackageId>
         <PackageTags>resw;resx;winui3</PackageTags>
-        
+
         <Copyright>Copyright © Kiyan Yang, All Rights Reserved.</Copyright>
         <PackageProjectUrl>https://github.com/KiyanYang/DotVast.Toolkit.StringResource</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/KiyanYang/DotVast.Toolkit.StringResource</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     </PropertyGroup>
+
+    <PropertyGroup>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\DotVast.Toolkit.StringResource.SourceGenerators\DotVast.Toolkit.StringResource.SourceGenerators.csproj" ReferenceOutputAssembly="false" />
