@@ -6,20 +6,20 @@ namespace DotVast.Toolkit.StringResource;
 public sealed class StringResourceAttribute : Attribute
 {
     /// <summary>
-    /// For example: "../Strings/Resources.resw"
+    /// For example: <code>../Strings/Resources.resw</code>
     /// </summary>
     public string Path { get; }
 
     /// <summary>
-    /// For example: "public static {0} => "{0}".GetLocalized();"
+    /// For example: <code>public static {0} => "{0}".GetLocalized();</code>
     /// <para>
-    /// Generator: public static ReswKey => "ReswKey".GetLocalized();
+    /// Generator: <code>public static ReswKey => "ReswKey".GetLocalized();</code>
     /// </para>
     /// </summary>
     public string PropertyFormat { get; }
 
     /// <summary>
-    /// For example: "using App.Extensions;"
+    /// For example: <code>using App.Extensions;</code>
     /// </summary>
     public string? UsingsFormat { get; }
 
