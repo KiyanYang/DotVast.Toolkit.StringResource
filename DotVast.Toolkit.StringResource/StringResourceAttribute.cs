@@ -36,5 +36,5 @@ public sealed class StringResourceAttribute : Attribute
         UsingsFormat = usingsFormat;
     }
 
-    public const string PublicStatic = "public static string {0} => \"{0}\";";
+    public const string PublicStatic = """public static string {0} => "{0}";""";
 }
